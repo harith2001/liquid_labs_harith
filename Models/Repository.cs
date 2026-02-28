@@ -11,6 +11,6 @@ public class Repository
     public string? Language { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public Owner? Owner { get; set; }
+    public Owner Owner { get; set; } = default!;
 
 }
