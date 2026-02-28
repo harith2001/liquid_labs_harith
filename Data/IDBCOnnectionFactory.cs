@@ -1,6 +1,6 @@
-using System.Data.SqlClient;
+using System.Data.Common;
 
-public interface IDBCOnnectionFactory
+public interface IDBConnectionFactory
 {
-    SqlConnection CreateConnection();
+    DbConnection CreateConnection();
 }
