@@ -1,16 +1,16 @@
-using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using System.Data.Common;
 
-public class SqlConnectionFactory : IDBCOnnectionFactory
+public class SqlConnectionFactory : IDBConnectionFactory
 {
     private readonly string _connectionString;
 
-    public SqlConnectionFactory(IConfiguration configuration)
+    public SqlConnectionFactory(string connectionString)
     {
-        _connectionString = configuration.GetConnectionString("DefaultConnection");
+        _connectionString = connectionString;
     }
 
-    public SqlConnection CreateConnection()
+    public DbConnection CreateConnection()
     {
         return new SqlConnection(_connectionString);
     }
