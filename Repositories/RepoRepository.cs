@@ -1,6 +1,7 @@
 using System.Data.Common;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Runtime.InteropServices;
+using System.ComponentModel.DataAnnotations;
 
 public class RepoRepository
 {
@@ -10,32 +11,36 @@ public class RepoRepository
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<Repository?> GetByFullNameAsync (string fullName)
+    public async Task<Repository?> GetByFullNameAsync(string fullName)
     {
         using var connection = _connectionFactory.CreateConnection();
         await connection.OpenAsync();
-        
-        string query =@"
+
+        string query = @"
             SELECT rp.*, o.Id as OwnerId, o.GithubId as OwnerGithubId, o.Login, o.Url, o.Type
             FROM Repositories rp
             INNER JOIN Owners o ON rp.OwnerID = o.Id
             WHERE rp.FullName = @FullName";
 
+        var command = connection.CreateCommand();
+        command.CommandText = query;
         // paramterized query
-        using var command = new SqlCommand(query, connection);
-        command.Parameters.AddWithValue("@FullName", fullName);
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@FullName";
+        parameter.Value = fullName;
+        command.Parameters.Add(parameter);
 
         using var reader = await command.ExecuteReaderAsync();
 
         // check validation
-        if(!reader.HasRows)
-        return null;
+        if (!reader.HasRows)
+            return null;
 
         await reader.ReadAsync();
 
         return new Repository
         {
-            Id = reader.GetInt32(reader.getOrdinal("Id")),
+            Id = reader.GetInt32(reader.GetOrdinal("Id")),
             GithubId = reader.GetInt64(reader.GetOrdinal("GithubId")),
             Name = reader.GetString(reader.GetOrdinal("Name")),
             FullName = reader.GetString(reader.GetOrdinal("FullName")),
