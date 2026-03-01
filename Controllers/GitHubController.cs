@@ -11,6 +11,7 @@ public class GitHubRepoController : ControllerBase
         _repositoryService = repositoryService;
     }
 
+    // Get By Owner And RepoName 
     [HttpGet("{owner}/{repoName}")]
     public async Task<IActionResult> GetRepository(string owner, string repoName)
     {
@@ -35,6 +36,22 @@ public class GitHubRepoController : ControllerBase
         catch (Exception ex)
     {
             return StatusCode(500, ex.Message );
+        }
+    }
+
+    // Get ALL 
+    [HttpGet("All")]
+    public async Task<IActionResult> GetAll()
+    {
+        try
+        {
+            var repositories = await _repositoryService.GetAllRepositoriesAsync();
+            return Ok(repositories);
+        }
+        catch (Exception)
+        {
+            
+            return StatusCode(500, "An Unexpected error occurred.");
         }
     }
 }

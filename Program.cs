@@ -21,9 +21,10 @@ builder.Services.AddScoped<RepoRepository>();
 builder.Services.AddScoped<IRepositoryService,RepositoryService>();
 
 // 3rd party services
+var githubBaseUrl = builder.Configuration.GetSection("Github");
 builder.Services.AddHttpClient<IGitHubService, GitHubService>(client =>
 {
-    client.BaseAddress = new Uri ("https://api.github.com/");
+    client.BaseAddress = new Uri (githubBaseUrl["BaseUrl"]!);
     client.DefaultRequestHeaders.Add("User-Agent", "LiquidLabsHarith");
     client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
 });

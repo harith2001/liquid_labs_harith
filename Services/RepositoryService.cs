@@ -11,6 +11,11 @@ public class RepositoryService : IRepositoryService
         _gitHubService = gitHubService;
     }
 
+    public async Task<List<Repository>> GetAllRepositoriesAsync()
+    {
+        return await _repositoryRepository.GetAllAsync();
+    }
+
     public async Task<Repository?> GetRepositoryAsync(string owner, string repoName)
     {   
         // full name of the repo
