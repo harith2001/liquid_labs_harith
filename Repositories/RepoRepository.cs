@@ -118,7 +118,7 @@ public class RepoRepository
         {
             int ownerId = await EnsureOwnerAsync(repository.Owner, connection, transaction);
 
-            string insertQuery= @"
+            string insertQuery = @"
             INSERT INTO Repositories
             (GithubId, Name, FullName, Description, StargazersCount, ForksCount, OpenIssuesCount, Language, CreatedAt, UpdatedAt, OwnerId)
             VALUES
@@ -149,5 +149,54 @@ public class RepoRepository
             await transaction.RollbackAsync();
             throw;
         }
+    }
+
+    // GET - get ALL Repositories in DB
+    public async Task<List<Repository>> GetAllAsync()
+    {
+        var repositories = new List<Repository>();
+
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync();
+
+        string query = @"
+            SELECT rp.*,
+            o.Id AS OwnerId, o.GithubId AS OwnerGithubId, o.Login, o.Url, o.Type
+            FROM Repositories rp
+            INNER JOIN Owners o ON rp.OwnerId = o.Id ";
+
+        var command = connection.CreateCommand();
+        command.CommandText = query;
+
+        using var reader = await command.ExecuteReaderAsync();
+
+        // loop to get all 
+        while (await reader.ReadAsync())
+        {
+            var repository = new Repository
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                GithubId = reader.GetInt64(reader.GetOrdinal("GithubId")),
+                Name = reader.GetString(reader.GetOrdinal("Name")),
+                FullName = reader.GetString(reader.GetOrdinal("FullName")),
+                Description = reader["Description"] as string,
+                StargazersCount = reader.GetInt32(reader.GetOrdinal("StargazersCount")),
+                ForksCount = reader.GetInt32(reader.GetOrdinal("ForksCount")),
+                OpenIssuesCount = reader.GetInt32(reader.GetOrdinal("OpenIssuesCount")),
+                Language = reader["Language"] as string,
+                CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt")),
+                Owner = new Owner
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("OwnerId")),
+                    GithubId = reader.GetInt64(reader.GetOrdinal("OwnerGithubId")),
+                    Login = reader.GetString(reader.GetOrdinal("Login")),
+                    Url = reader["Url"] as string,
+                    Type = reader["Type"] as string
+                }
+            };
+            repositories.Add(repository);
+        }
+        return repositories;
     }
 }
