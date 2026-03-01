@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "Password123@$"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+      - ./docker/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./docker/init-db.sh:/init-db.sh
+    command: /bin/bash -c "
+      /opt/mssql/bin/sqlservr & \
+      sleep 20 && \
+      bash /init-db.sh &&
+      wait
+        "
+
+  api:
+    build: .
+    container_name: backend_api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=Harith_Local;User Id=sa;Password=Password123@$;TrustServerCertificate=True;"
+      ASPNETCORE_URLS: "http://+:8080"
+    depends_on:
+      - sqlserver
+
+volumes:
+  sql_data:
