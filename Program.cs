@@ -1,12 +1,24 @@
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // SQL Connection 
-builder.Services.AddSingleton<IDBConnectionFactory, SqlConnectionFactory>();
+builder.Services.AddSingleton<IDBConnectionFactory>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+    return new SqlConnectionFactory(connectionString!);
+});
+
+// Register Services 
+builder.Services.AddScoped<RepoRepository>();
+builder.Services.AddScoped<IRepositoryService,RepositoryService>();
 
 // 3rd party services
 builder.Services.AddHttpClient<IGitHubService, GitHubService>(client =>
@@ -26,6 +38,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
 

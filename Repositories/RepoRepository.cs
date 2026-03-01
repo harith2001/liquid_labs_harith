@@ -120,9 +120,9 @@ public class RepoRepository
 
             string insertQuery= @"
             INSERT INTO Repositories
-            (GithubId, Name, FullName, Description, StragazersCount, ForksCount, OpenIssuesCount, Language, CreatedAt, UpdatedAt, OwnerId)
+            (GithubId, Name, FullName, Description, StargazersCount, ForksCount, OpenIssuesCount, Language, CreatedAt, UpdatedAt, OwnerId)
             VALUES
-            (@GithubId, @Name, @FullName, @Description, @StragazersCount, @ForksCount, @OpenIssuesCount, @Language, @CreatedAt, @UpdatedAt, @OwnerId)";
+            (@GithubId, @Name, @FullName, @Description, @StargazersCount, @ForksCount, @OpenIssuesCount, @Language, @CreatedAt, @UpdatedAt, @OwnerId)";
 
             await using var command = connection.CreateCommand();
             command.CommandText = insertQuery;
@@ -132,7 +132,7 @@ public class RepoRepository
             AddParameter(command, "@Name", repository.Name);
             AddParameter(command, "@FullName", repository.FullName);
             AddParameter(command, "@Description", repository.Description);
-            AddParameter(command, "@StragazersCount", repository.StargazersCount);
+            AddParameter(command, "@StargazersCount", repository.StargazersCount);
             AddParameter(command, "@ForksCount", repository.ForksCount);
             AddParameter(command, "@OpenIssuesCount", repository.OpenIssuesCount);
             AddParameter(command, "@Language", repository.Language);
