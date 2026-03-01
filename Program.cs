@@ -8,6 +8,10 @@ builder.Services.AddSwaggerGen();
 // SQL Connection 
 builder.Services.AddSingleton<IDBConnectionFactory, SqlConnectionFactory>();
 
+// Register Services 
+builder.Services.AddScoped<RepoRepository>();
+builder.Services.AddScoped<IRepositoryService,RepositoryService>();
+
 // 3rd party services
 builder.Services.AddHttpClient<IGitHubService, GitHubService>(client =>
 {
