@@ -5,6 +5,4 @@ public class Owner
     public string? Login {get; set;}
     public string? Url {get; set;}
     public string? Type {get; set;}
-    public DateTime CreatedAt { get; set; }
-
 }
