@@ -76,7 +76,7 @@ This Project is an ASP.NET core web API that integrates with the GithUb public R
 
 1. Get Single Repository </br>
    `GET /api/v1/GitHubRepo/{owner}/{repoName}`
-2. Get Single Repository </br>
+2. Get All Repositories in DB </br>
    `GET /api/v1/GitHubRepo/All`
 
 ## Author
