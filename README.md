@@ -2,7 +2,7 @@
 
 ## Overiew
 
-This Project is an ASP.NET core web API that integrates with the GithUb public REST API to retrieve repository data.
+This Project is an ASP.NET core web API that integrates with the Github public REST API to retrieve repository data.
 
 ## Features
 
